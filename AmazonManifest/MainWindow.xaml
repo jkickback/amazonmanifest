@@ -7,20 +7,49 @@
             <DockPanel>
                 <Menu DockPanel.Dock="Top">
                     <MenuItem Header="_File">
-                        <MenuItem Header="_Open" Click="OpenFile_Click"/>
-                        <MenuItem Header="_Close"/>
-                        <MenuItem Header="_Save"/>
+                        <MenuItem Header="_Quit" Command="{Binding QuitCommand}"/>
                     </MenuItem>
                 </Menu>
 
             </DockPanel>
             <StackPanel Orientation="Horizontal" Height="50" Margin="10,0">
-                <Button Content="Browse File..." Width="76" Click="OpenFile_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
+                <TextBox Text="B00K16MFA6" x:Name="BarcodeInput" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Width="229" FontSize="18" TextAlignment="Center" />
+                <Button Command="{Binding SearchSheetCommand}" CommandParameter="{Binding ElementName=BarcodeInput, Path=Text}" Width="105" IsDefault="True">
+                    Search!
+                </Button>
+                <TextBlock Width="632" Foreground="Black" Text="{Binding ElementName=StatusBar.StatusText}"/>
             </StackPanel>
-            <DataGrid Name="SpreadsheetView" Height="769" Margin="10,0" IsReadOnly="True">
+            <ListView x:Name="SpreadSheetGrid" Height="719"  ItemsSource="{Binding Rows}" Margin="10,0"  >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=Selected}" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                                <Setter Property="IsSelected" Value="True" ></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Selected}" Value="False">
+                                <Setter Property="Background" Value="White" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView x:Name="grdTest">
+                        <GridViewColumn Header="RowId" DisplayMemberBinding="{Binding RowId}"  Width="50"/>
+                        <GridViewColumn Header="Asin" DisplayMemberBinding="{Binding Asin}"  Width="100" />
+                        <GridViewColumn Header="UPC" DisplayMemberBinding="{Binding UPC}" Width="100" />
+                        <GridViewColumn Header="EAN" DisplayMemberBinding="{Binding EAN}" Width="100" />
+                        <GridViewColumn Header="LPN" DisplayMemberBinding="{Binding LPN}" Width="100" />
+                        <GridViewColumn Header="FCSKU" DisplayMemberBinding="{Binding FCSKU}" Width="100" />
+                        <!--<GridViewColumn Header="ANSKU" DisplayMemberBinding="{Binding ANSKU}" Width="100" />-->
+                        <GridViewColumn Header="ItemDesc" DisplayMemberBinding="{Binding ItemDesc}" Width="420" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <!--<DataGrid Name="SpreadsheetView" Height="769" Margin="10,0" IsReadOnly="True">
                 
-            </DataGrid>
+            </DataGrid>-->
 
         </StackPanel>
     </Grid>

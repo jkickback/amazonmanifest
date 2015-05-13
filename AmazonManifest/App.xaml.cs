@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AmazonManifest.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,15 @@ namespace AmazonManifest
     /// </summary>
     public partial class App : Application
     {
+        //protected override void OnStartup(StartupEventArgs e)
+        //{
+        //    base.OnStartup(e);
+        //    AmazonManifest.MainWindow window = new MainWindow();
+        //    RowViewModel VM = new RowViewModel();
+        //    window.DataContext = VM;
+        //    window.Show();
+        //}
     }
+
+
 }
