@@ -19,6 +19,7 @@ using AmazonManifest.DataTypes;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using AmazonManifest.ViewModel;
+using System.Reflection;
 
 namespace AmazonManifest
 {
@@ -31,12 +32,33 @@ namespace AmazonManifest
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(SpreadSheetGrid);
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            Title = string.Format("Amazon Manifest Tool v{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            DataContext = new MainViewModel(SpreadSheetGrid, BarcodeInput);
         }
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.Close();
         }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!BarcodeInput.IsFocused)
+            {
+                BarcodeInput.Focus();
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!BarcodeInput.IsFocused)
+            {
+                BarcodeInput.Focus();
+            }
+            
+        }
+
+        
     }
 }

@@ -22,14 +22,5 @@ namespace AmazonManifest.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Liq_WeeklyManifest_V3_US_201503")]
-        public string SheetName {
-            get {
-                return ((string)(this["SheetName"]));
-            }
-        }
     }
 }

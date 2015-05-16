@@ -10,29 +10,20 @@ namespace AmazonManifest.DataTypes
 {
     public class SpreadSheetRow : INotifyPropertyChanged
     {
+
+        #region Private Members
         private int _rowId;
         private string _asin;
         private string _upc;
         private string _ean;
         private string _lpn;
         private string _fcsku;
-        //private string _ansku;
         private string _itemdesc;
-
         private bool _selected;
+        private bool _found;
+        #endregion
 
-        public int RowId 
-        { 
-            get
-            {
-                return _rowId;
-            }
-            set
-            {
-                _rowId = value;
-                OnPropertyChanged("RowId");
-            }
-        }
+        #region Public Grid Members
 
         public string Asin 
         {
@@ -46,7 +37,6 @@ namespace AmazonManifest.DataTypes
                 OnPropertyChanged("Asin");
             }
         }
-
 
         public string UPC 
         {
@@ -100,19 +90,6 @@ namespace AmazonManifest.DataTypes
             }  
         }
 
-        //public string ANSKU 
-        //{
-        //    get
-        //    {
-        //        return _ansku;
-        //    }
-        //    set
-        //    {
-        //        _ansku = value;
-        //        OnPropertyChanged("ANSKU");
-        //    } 
-        //}
-        
         public string ItemDesc 
         {
             get
@@ -124,6 +101,62 @@ namespace AmazonManifest.DataTypes
                 _itemdesc = value;
                 OnPropertyChanged("ItemDesc");
             } 
+        }
+
+        #endregion
+
+        #region Public Spreadsheet-only Members
+        //public string LiquidatorVendorCode { get; set; }
+        //public string InventoryLocation { get; set; }
+        //public string FC { get; set; }
+        //public string IOG { get; set; }
+        //public string RemovalReason { get; set; }
+        //public string ShipmentClosed { get; set; }
+        //public string BOL { get; set; }
+        //public string Carrier { get; set; }
+        //public string ShipToCity { get; set; }
+        //public string RemovalOrderID { get; set; }
+        //public string ReturnID { get; set; }
+        //public string ReturnItemID { get; set; }
+        //public string ShipmentRequestID { get; set; }
+        //public string PkgID { get; set; }
+        //public string GL { get; set; }
+        //public string GLDesc { get; set; }
+        //public string CategoryCode { get; set; }
+        //public string CategoryDesc { get; set; }
+        //public string SubcatCode { get; set; }
+        //public string SubcatDesc { get; set; }
+        //public string Units { get; set; }
+        //public string ItemPkgWeight { get; set; }
+        //public string ItemPkgWeightUOM { get; set; }
+        //public string CostSource { get; set; }
+        //public string CurrencyCode { get; set; }
+        //public string UnitCost { get; set; }
+        //public string AmazonPrice { get; set; }
+        //public string UnitRecovery { get; set; }
+        //public string TotalCost { get; set; }
+        //public string TotalRecovery { get; set; }
+        //public string RecoveryRate { get; set; }
+        //public string RecoveryRateType { get; set; }
+        //public string AdjTotalRecovery { get; set; }
+        //public string AdjRecoveryRate { get; set; }
+        //public string AdjReason { get; set; }
+        //public string FNSku { get; set; }
+
+        #endregion
+
+        #region Public Helper Members
+        public int RowId
+        {
+            get
+            {
+                return _rowId;
+            }
+            set
+            {
+                _rowId = value;
+                OnPropertyChanged("RowId");
+            }
         }
 
         public bool Selected
@@ -139,6 +172,20 @@ namespace AmazonManifest.DataTypes
             }
         }
 
+        public bool Found
+        {
+            get
+            {
+                return _found;
+            }
+            set
+            {
+                _found = value;
+                OnPropertyChanged("Found");
+            }
+        }
+
+        #endregion
 
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
