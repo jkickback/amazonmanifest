@@ -119,6 +119,15 @@ namespace AmazonManifest.ViewModel
         }
         public void ChooseSpreadsheet()
         {
+            _statusBar.StatusText = "Please Choose a Spreadsheet.";
+            //clear out cache, in case they're opening a new spreadsheet.
+            _rowList = new List<SpreadSheetRow>();
+            _totalsBar.NumberScans = 0;
+            _totalsBar.TotalFound = 0;
+            _totalsBar.TotalRows = 0;
+            Scans = new List<string>();
+
+
             //Create OpenFileDialog 
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
 
@@ -231,7 +240,7 @@ namespace AmazonManifest.ViewModel
             }
             SpreadSheetGrid.ItemsSource = _rowList;
             _totalsBar.TotalRows = _rowList.Count;
-
+            _statusBar.StatusText = "Waiting for you to Scan...";
 
         }
         #endregion
