@@ -23,9 +23,9 @@ namespace AmazonManifest
 
 
 
-        public static void ShowLongOperationDialog(Action longOperation)
+        public static void ShowLongOperationDialog(Action longOperation, string message)
         {
-            var dialog = new LongOperationDialog(longOperation);
+            var dialog = new LongOperationDialog(longOperation, message);
             var dialogResult = dialog.ShowDialog();
 
             if (dialogResult != true)

@@ -24,10 +24,11 @@ namespace AmazonManifest.Views
 
         private Action _longOperation;
 
-        public LongOperationDialog(Action longOperation)
+        public LongOperationDialog(Action longOperation, string message="Loading...")
         {
             InitializeComponent();
 
+            MessageText.Text = message;
             _longOperation = longOperation;
 
             var worker = new BackgroundWorker();

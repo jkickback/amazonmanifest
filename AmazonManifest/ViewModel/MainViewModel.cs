@@ -192,42 +192,42 @@ namespace AmazonManifest.ViewModel
                 newRow.ItemDesc = row["itemDesc"].ToString();
 
                 #region "rows that we dont need to display/query"
-                //newRow.LiquidatorVendorCode = row["LiquidatorVendorCode"].ToString();
-                //newRow.InventoryLocation = row["InventoryLocation"].ToString();
-                //newRow.FC = row["FC"].ToString();
-                //newRow.IOG = row["IOG"].ToString();
-                //newRow.RemovalReason = row["RemovalReason"].ToString();
-                //newRow.ShipmentClosed = row["ShipmentClosed"].ToString();
-                //newRow.BOL = row["BOL"].ToString();
-                //newRow.Carrier = row["Carrier"].ToString();
-                //newRow.ShipToCity = row["ShipToCity"].ToString();
-                //newRow.RemovalOrderID = row["RemovalOrderID"].ToString();
-                //newRow.ReturnID = row["ReturnID"].ToString();
-                //newRow.ReturnItemID = row["ReturnItemID"].ToString();
-                //newRow.ShipmentRequestID = row["ShipmentRequestID"].ToString();
-                //newRow.PkgID = row["PkgID"].ToString();
-                //newRow.GL = row["GL"].ToString();
-                //newRow.GLDesc = row["GLDesc"].ToString();
-                //newRow.CategoryCode = row["CategoryCode"].ToString();
-                //newRow.CategoryDesc = row["CategoryDesc"].ToString();
-                //newRow.SubcatCode = row["SubcatCode"].ToString();
-                //newRow.SubcatDesc = row["SubcatDesc"].ToString();
-                //newRow.Units = row["Units"].ToString();
-                //newRow.ItemPkgWeight = row["ItemPkgWeight"].ToString();
-                //newRow.ItemPkgWeightUOM = row["ItemPkgWeightUOM"].ToString();
-                //newRow.CostSource = row["CostSource"].ToString();
-                //newRow.CurrencyCode = row["CurrencyCode"].ToString();
-                //newRow.UnitCost = row["UnitCost"].ToString();
-                //newRow.AmazonPrice = row["AmazonPrice"].ToString();
-                //newRow.UnitRecovery = row["UnitRecovery"].ToString();
-                //newRow.TotalCost = row["TotalCost"].ToString();
-                //newRow.TotalRecovery = row["TotalRecovery"].ToString();
-                //newRow.RecoveryRate = row["RecoveryRate"].ToString();
-                //newRow.RecoveryRateType = row["RecoveryRateType"].ToString();
-                //newRow.AdjTotalRecovery = row["AdjTotalRecovery"].ToString();
-                //newRow.AdjRecoveryRate = row["AdjRecoveryRate"].ToString();
-                //newRow.AdjReason = row["AdjReason"].ToString();
-                //newRow.FNSku = row["FNSku"].ToString();
+                newRow.LiquidatorVendorCode = row["LiquidatorVendorCode"].ToString();
+                newRow.InventoryLocation = row["InventoryLocation"].ToString();
+                newRow.FC = row["FC"].ToString();
+                newRow.IOG = row["IOG"].ToString();
+                newRow.RemovalReason = row["RemovalReason"].ToString();
+                newRow.ShipmentClosed = row["ShipmentClosed"].ToString();
+                newRow.BOL = row["BOL"].ToString();
+                newRow.Carrier = row["Carrier"].ToString();
+                newRow.ShipToCity = row["ShipToCity"].ToString();
+                newRow.RemovalOrderID = row["RemovalOrderID"].ToString();
+                newRow.ReturnID = row["ReturnID"].ToString();
+                newRow.ReturnItemID = row["ReturnItemID"].ToString();
+                newRow.ShipmentRequestID = row["ShipmentRequestID"].ToString();
+                newRow.PkgID = row["PkgID"].ToString();
+                newRow.GL = row["GL"].ToString();
+                newRow.GLDesc = row["GLDesc"].ToString();
+                newRow.CategoryCode = row["CategoryCode"].ToString();
+                newRow.CategoryDesc = row["CategoryDesc"].ToString();
+                newRow.SubcatCode = row["SubcatCode"].ToString();
+                newRow.SubcatDesc = row["SubcatDesc"].ToString();
+                newRow.Units = row["Units"].ToString();
+                newRow.ItemPkgWeight = row["ItemPkgWeight"].ToString();
+                newRow.ItemPkgWeightUOM = row["ItemPkgWeightUOM"].ToString();
+                newRow.CostSource = row["CostSource"].ToString();
+                newRow.CurrencyCode = row["CurrencyCode"].ToString();
+                newRow.UnitCost = row["UnitCost"].ToString();
+                newRow.AmazonPrice = row["AmazonPrice"].ToString();
+                newRow.UnitRecovery = row["UnitRecovery"].ToString();
+                newRow.TotalCost = row["TotalCost"].ToString();
+                newRow.TotalRecovery = row["TotalRecovery"].ToString();
+                newRow.RecoveryRate = row["RecoveryRate"].ToString();
+                newRow.RecoveryRateType = row["RecoveryRateType"].ToString();
+                newRow.AdjTotalRecovery = row["AdjTotalRecovery"].ToString();
+                newRow.AdjRecoveryRate = row["AdjRecoveryRate"].ToString();
+                newRow.AdjReason = row["AdjReason"].ToString();
+                newRow.FNSku = row["FNSku"].ToString();
                 #endregion
                 newRow.Found = false;
                 newRow.Selected = false;
@@ -270,35 +270,39 @@ namespace AmazonManifest.ViewModel
 
         public void SearchSheet(string barcodeText)
         {
+            var result = new SpreadSheetRow();
+
              Dialogs.ShowLongOperationDialog(new Action(() =>
              {
                 
                 ResetRows();
 
                 //Search through columns U (ASIN), V (UPC), W (EAN), AP (LPN), X (FCSKU) and  AP (ANSKU).
-                var result = _rowList.Where(s => s.Asin == barcodeText
+                result = _rowList.Where(s => s.Asin == barcodeText
                     || s.UPC == barcodeText 
                     || s.EAN == barcodeText 
                     || s.LPN == barcodeText 
                     || s.FCSKU == barcodeText).SingleOrDefault();
 
-                if (result != null)
-                { 
-                    result.Selected = true;
-                    result.Found = true;
-                    SpreadSheetGrid.SelectedItem = result;
-                    SpreadSheetGrid.ScrollIntoView(result);
-                    _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
-                    _statusBar.StatusText = barcodeText + " Found!";
-
-                }
-                else
-                {
-                    StatusBar.StatusText = barcodeText + " Not Found!";
-                    AddScan(barcodeText);
-                }
+                
                 //Thread.Sleep(4000);
-            }));
+            }), "Searcing...");
+
+             if (result != null)
+             {
+                 result.Selected = true;
+                 result.Found = true;
+                 SpreadSheetGrid.SelectedItem = result;
+                 SpreadSheetGrid.ScrollIntoView(result);
+                 _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
+                 _statusBar.StatusText = barcodeText + " Found!";
+
+             }
+             else
+             {
+                 StatusBar.StatusText = barcodeText + " Not Found!";
+                 AddScan(barcodeText);
+             }
 
             BarcodeTextBox.Focus();
             BarcodeTextBox.Select(0, BarcodeTextBox.Text.Length);
@@ -359,7 +363,7 @@ namespace AmazonManifest.ViewModel
 
 
                 pck.Save();
-            }));
+            }), "Saving...");
             _statusBar.StatusText = "Successfully Saved " + XlsFileName;
 
         }

@@ -217,7 +217,7 @@
             <Setter Property="FontFamily" Value="Roboto Light"></Setter>
         </Style>
 
-        <Style TargetType="TextBox">
+        <!--<Style TargetType="TextBox">
             <Setter Property="Height" Value="45"></Setter>
             <Setter Property="BorderBrush" Value="#FF6A6A6A" />
             <Setter Property="BorderThickness" Value="2"></Setter>
@@ -261,7 +261,7 @@
                     <Setter Property="BorderBrush" Value="{StaticResource MainAccentBrush}"></Setter>
                 </Trigger>
             </Style.Triggers>
-        </Style>
+        </Style>-->
 
         <Style TargetType="PasswordBox">
             <Setter Property="Height" Value="45"></Setter>
