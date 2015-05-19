@@ -1,4 +1,5 @@
 ﻿using AmazonManifest.ViewModel;
+using GalaSoft.MvvmLight.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -16,12 +17,14 @@ namespace AmazonManifest
     {
         //protected override void OnStartup(StartupEventArgs e)
         //{
-        //    base.OnStartup(e);
-        //    AmazonManifest.MainWindow window = new MainWindow();
-        //    RowViewModel VM = new RowViewModel();
-        //    window.DataContext = VM;
-        //    window.Show();
+        //    DispatcherHelper.Initialize();   
         //}
+
+        public App()
+        {
+            DispatcherHelper.Initialize();
+        }
+
     }
 
 

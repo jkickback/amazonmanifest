@@ -87,11 +87,19 @@
     </Compile>
     <Compile Include="DataTypes\StatusBar.cs" />
     <Compile Include="DataTypes\Totals.cs" />
+    <Compile Include="Dialogs.cs" />
     <Compile Include="TextBoxBehavior.cs" />
     <Compile Include="ViewModel\MainViewModel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\LongOperationDialog.xaml.cs">
+      <DependentUpon>LongOperationDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\MessageDialog.xaml.cs">
+      <DependentUpon>MessageDialog.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,6 +112,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\LongOperationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MessageDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -135,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="reports.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\LoadingWheel.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

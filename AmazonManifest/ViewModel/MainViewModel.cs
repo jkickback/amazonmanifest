@@ -15,6 +15,8 @@ using System.Windows;
 using OfficeOpenXml;
 using System.Windows.Media;
 using System.Globalization;
+using GalaSoft.MvvmLight.Threading;
+using System.Threading;
 
 
 namespace AmazonManifest.ViewModel
@@ -67,11 +69,6 @@ namespace AmazonManifest.ViewModel
 
         public TextBox BarcodeTextBox { get; set; }
 
-        //public List<SpreadSheetRow> Rows
-        //{
-        //    get { return _rowList; }
-        //    set { _rowList = value; }
-        //}
 
         public List<string> Scans { get; set; }
 
@@ -273,37 +270,39 @@ namespace AmazonManifest.ViewModel
 
         public void SearchSheet(string barcodeText)
         {
-            ResetRows();
-
-            //Search through columns U (ASIN), V (UPC), W (EAN), AP (LPN), X (FCSKU) and  AP (ANSKU).
-            var result = _rowList.Where(s => s.Asin == barcodeText
-                || s.UPC == barcodeText 
-                || s.EAN == barcodeText 
-                || s.LPN == barcodeText 
-                || s.FCSKU == barcodeText).SingleOrDefault();
-
-            if (result != null)
-            { 
-                result.Selected = true;
-                result.Found = true;
-                SpreadSheetGrid.SelectedItem = result;
-                SpreadSheetGrid.ScrollIntoView(result);
-                _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
-                _statusBar.StatusText = barcodeText + " Found!";
-
-            }
-            else
-            {
-                StatusBar.StatusText = barcodeText + " Not Found!";
-                AddScan(barcodeText);
+             Dialogs.ShowLongOperationDialog(new Action(() =>
+             {
                 
-                
-            }
+                ResetRows();
 
+                //Search through columns U (ASIN), V (UPC), W (EAN), AP (LPN), X (FCSKU) and  AP (ANSKU).
+                var result = _rowList.Where(s => s.Asin == barcodeText
+                    || s.UPC == barcodeText 
+                    || s.EAN == barcodeText 
+                    || s.LPN == barcodeText 
+                    || s.FCSKU == barcodeText).SingleOrDefault();
+
+                if (result != null)
+                { 
+                    result.Selected = true;
+                    result.Found = true;
+                    SpreadSheetGrid.SelectedItem = result;
+                    SpreadSheetGrid.ScrollIntoView(result);
+                    _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
+                    _statusBar.StatusText = barcodeText + " Found!";
+
+                }
+                else
+                {
+                    StatusBar.StatusText = barcodeText + " Not Found!";
+                    AddScan(barcodeText);
+                }
+                //Thread.Sleep(4000);
+            }));
 
             BarcodeTextBox.Focus();
             BarcodeTextBox.Select(0, BarcodeTextBox.Text.Length);
-            
+           
         }
         #endregion
 
@@ -317,47 +316,50 @@ namespace AmazonManifest.ViewModel
         {
             _statusBar.StatusText = "Saving Output to " + XlsFileName;
 
-            ExcelPackage pck = new ExcelPackage(new FileInfo(XlsFileName));
-            ExcelWorksheet workSheet = pck.Workbook.Worksheets[1];
-
-            var start = workSheet.Dimension.Start;
-            var end = workSheet.Dimension.End;
-
-            foreach (SpreadSheetRow row in Rows)
+            Dialogs.ShowLongOperationDialog(new Action(() =>
             {
-                //Found the barcode on the spreadsheet, highlight it green
-                if (row.Found == true)
-                {
+                ExcelPackage pck = new ExcelPackage(new FileInfo(XlsFileName));
+                ExcelWorksheet workSheet = pck.Workbook.Worksheets[1];
 
-                    workSheet.Row(row.RowId + 1).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                    workSheet.Row(row.RowId + 1).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(176,255,122));
-                }
-                else
+                var start = workSheet.Dimension.Start;
+                var end = workSheet.Dimension.End;
+
+                foreach (SpreadSheetRow row in Rows)
                 {
-                    workSheet.Row(row.RowId + 1).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                    workSheet.Row(row.RowId + 1).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(255,122,122));
-                }
+                    //Found the barcode on the spreadsheet, highlight it green
+                    if (row.Found == true)
+                    {
+
+                        workSheet.Row(row.RowId + 1).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        workSheet.Row(row.RowId + 1).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(176,255,122));
+                    }
+                    else
+                    {
+                        workSheet.Row(row.RowId + 1).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        workSheet.Row(row.RowId + 1).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(255,122,122));
+                    }
             
-            }
+                }
 
 
-            if (pck.Workbook.Worksheets["Scanned But Not Found"] == null)
-            {
-                //Create new worksheet to save everything they scanned, but didn't find on the spreadsheet
-                pck.Workbook.Worksheets.Add("Scanned But Not Found");
-            }
+                if (pck.Workbook.Worksheets["Scanned But Not Found"] == null)
+                {
+                    //Create new worksheet to save everything they scanned, but didn't find on the spreadsheet
+                    pck.Workbook.Worksheets.Add("Scanned But Not Found");
+                }
 
-            ExcelWorksheet scannedWorksheet = pck.Workbook.Worksheets["Scanned But Not Found"];
-            int i = 0;
-            foreach (string code in Scans)
-            { 
-                string coords = string.Format("A{0}", (i + 1));
-                scannedWorksheet.Cells[coords].Value = code;
-                i++;
-            }
+                ExcelWorksheet scannedWorksheet = pck.Workbook.Worksheets["Scanned But Not Found"];
+                int i = 0;
+                foreach (string code in Scans)
+                { 
+                    string coords = string.Format("A{0}", (i + 1));
+                    scannedWorksheet.Cells[coords].Value = code;
+                    i++;
+                }
 
 
-            pck.Save();
+                pck.Save();
+            }));
             _statusBar.StatusText = "Successfully Saved " + XlsFileName;
 
         }
