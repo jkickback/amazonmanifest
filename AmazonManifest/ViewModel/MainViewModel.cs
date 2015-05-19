@@ -15,7 +15,6 @@ using System.Windows;
 using OfficeOpenXml;
 using System.Windows.Media;
 using System.Globalization;
-using GalaSoft.MvvmLight.Threading;
 using System.Threading;
 
 
@@ -94,8 +93,9 @@ namespace AmazonManifest.ViewModel
             _statusBar.StatusText = "Start Scanning!";
 
             TotalsBar = new Totals();
-            _totalsBar.TotalRows = 0;
-            _totalsBar.TotalFound = 0;
+            _totalsBar.TotalRows = 9999;
+            _totalsBar.TotalFound = 9999;
+            _totalsBar.NumberScans = 9999;
 
             Scans = new List<string>();
             Rows = new List<SpreadSheetRow>();
@@ -286,7 +286,7 @@ namespace AmazonManifest.ViewModel
 
                 
                 //Thread.Sleep(4000);
-            }), "Searcing...");
+            }), "Searching...");
 
              if (result != null)
              {

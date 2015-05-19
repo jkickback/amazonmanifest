@@ -1,5 +1,4 @@
 ﻿using AmazonManifest.ViewModel;
-using GalaSoft.MvvmLight.Threading;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -20,10 +19,10 @@ namespace AmazonManifest
         //    DispatcherHelper.Initialize();   
         //}
 
-        public App()
-        {
-            DispatcherHelper.Initialize();
-        }
+        //public App()
+        //{
+        //    DispatcherHelper.Initialize();
+        //}
 
     }
 
