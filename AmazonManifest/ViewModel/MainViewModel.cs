@@ -16,6 +16,7 @@ using OfficeOpenXml;
 using System.Windows.Media;
 using System.Globalization;
 using System.Threading;
+using System.Windows.Threading;
 
 
 namespace AmazonManifest.ViewModel
@@ -73,6 +74,8 @@ namespace AmazonManifest.ViewModel
 
         public List<string> SpreadsheetColumns { get; set; }
 
+        private SpreadSheetRow SearchResult { get; set; }
+
         #region Commands
         public ICommand LoadSpreadsheet { get; private set; }
 
@@ -99,6 +102,7 @@ namespace AmazonManifest.ViewModel
 
             Scans = new List<string>();
             Rows = new List<SpreadSheetRow>();
+            SearchResult = new SpreadSheetRow();
 
             this.SpreadSheetGrid = listview;
             this.BarcodeTextBox = barcodeBox;
@@ -140,8 +144,15 @@ namespace AmazonManifest.ViewModel
             {
                 // Open document 
                 XlsFileName = dlg.FileName;
-                LoadSpreadsheetExecute();
+                Dialogs.ShowLongOperationDialog(new Action(() =>
+                {
+                    LoadSpreadsheetExecute();
+                }), "Loading...");
+                SpreadSheetGrid.ItemsSource = _rowList;
+                _totalsBar.TotalRows = _rowList.Count;
+                _statusBar.StatusText = "Waiting for you to Scan...";
 
+                
             }
         }
 
@@ -169,8 +180,6 @@ namespace AmazonManifest.ViewModel
                 MessageBox.Show("Unable to open spreadsheet!");
                 return;
             }
-            
-
 
             //SpreadsheetView.ItemsSource = SpreadsheetData.Tables[Properties.Settings.Default.SheetName].DefaultView;
             DataTable table = SpreadsheetData.Tables[0];
@@ -235,10 +244,7 @@ namespace AmazonManifest.ViewModel
                 
                 index++;
             }
-            SpreadSheetGrid.ItemsSource = _rowList;
-            _totalsBar.TotalRows = _rowList.Count;
-            _statusBar.StatusText = "Waiting for you to Scan...";
-
+            
         }
         #endregion
 
@@ -268,45 +274,63 @@ namespace AmazonManifest.ViewModel
             }
         }
 
-        public void SearchSheet(string barcodeText)
+        private void HandleSearchResult(string barcodeText)
         {
-            var result = new SpreadSheetRow();
-
-             Dialogs.ShowLongOperationDialog(new Action(() =>
-             {
+            if (SearchResult != null)
+            {
+              
+                SpreadSheetGrid.SelectedItem = SearchResult;
+                Dispatcher.CurrentDispatcher.BeginInvoke(
+                    DispatcherPriority.Send,
+                    new Action(() => SpreadSheetGrid.ScrollIntoView(SearchResult))
+                );
                 
-                ResetRows();
+                _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
+                _statusBar.StatusText = barcodeText + " Found!";
 
-                //Search through columns U (ASIN), V (UPC), W (EAN), AP (LPN), X (FCSKU) and  AP (ANSKU).
-                result = _rowList.Where(s => s.Asin == barcodeText
-                    || s.UPC == barcodeText 
-                    || s.EAN == barcodeText 
-                    || s.LPN == barcodeText 
-                    || s.FCSKU == barcodeText).SingleOrDefault();
-
-                
-                //Thread.Sleep(4000);
-            }), "Searching...");
-
-             if (result != null)
-             {
-                 result.Selected = true;
-                 result.Found = true;
-                 SpreadSheetGrid.SelectedItem = result;
-                 SpreadSheetGrid.ScrollIntoView(result);
-                 _totalsBar.TotalFound = _rowList.Where(x => x.Found == true).Count();
-                 _statusBar.StatusText = barcodeText + " Found!";
-
-             }
-             else
-             {
-                 StatusBar.StatusText = barcodeText + " Not Found!";
-                 AddScan(barcodeText);
-             }
+            }
+            else
+            {
+                StatusBar.StatusText = barcodeText + " Not Found!";
+                //AddScan(barcodeText);
+            }
 
             BarcodeTextBox.Focus();
             BarcodeTextBox.Select(0, BarcodeTextBox.Text.Length);
            
+        }
+
+        public void SearchSheet(string barcodeText)
+        {
+            
+            Dialogs.ShowLongOperationDialog(new Action(() =>
+            {
+                
+                ResetRows();
+
+                //Search through columns U (ASIN), V (UPC), W (EAN), AP (LPN), X (FCSKU) and  AP (ANSKU).
+                SearchResult = _rowList.Where(s => s.Asin == barcodeText
+                    || s.UPC == barcodeText 
+                    || s.EAN == barcodeText 
+                    || s.LPN == barcodeText 
+                    || s.FCSKU == barcodeText).FirstOrDefault();
+
+                
+                
+                if (SearchResult != null)
+                {
+                    SearchResult.Selected = true;
+                    SearchResult.Found = true;
+                }
+                else
+                {
+                    AddScan(barcodeText);
+                }
+                Thread.Sleep(1000);
+            }), "Searching...");
+
+            HandleSearchResult(barcodeText);
+            
         }
         #endregion
 
