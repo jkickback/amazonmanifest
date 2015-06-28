@@ -21,6 +21,7 @@ namespace AmazonManifest.DataTypes
         private string _itemdesc;
         private bool _selected;
         private bool _found;
+        private int _foundCount;
         #endregion
 
         #region Public Grid Members
@@ -182,6 +183,19 @@ namespace AmazonManifest.DataTypes
             {
                 _found = value;
                 OnPropertyChanged("Found");
+            }
+        }
+
+        public int FoundCount
+        {
+            get
+            {
+                return _foundCount;
+            }
+            set
+            {
+                _foundCount = value;
+                OnPropertyChanged("FoundCount");
             }
         }
 

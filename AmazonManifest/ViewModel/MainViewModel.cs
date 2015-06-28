@@ -240,6 +240,7 @@ namespace AmazonManifest.ViewModel
                 #endregion
                 newRow.Found = false;
                 newRow.Selected = false;
+                newRow.FoundCount = 0;
                 _rowList.Add(newRow);
                 
                 index++;
@@ -272,6 +273,17 @@ namespace AmazonManifest.ViewModel
                 Scans.Add(scan);
                 _totalsBar.NumberScans = Scans.Count;
             }
+        }
+
+        private void WriteXML()
+        {
+            System.Xml.Serialization.XmlSerializer writer =
+                new System.Xml.Serialization.XmlSerializer(typeof(List<SpreadSheetRow>));
+
+            string filename = XlsFileName.Replace(".xlsx", ".xml");
+            System.IO.StreamWriter file = new System.IO.StreamWriter(filename);
+            writer.Serialize(file, _rowList);
+            file.Close();
         }
 
         private void HandleSearchResult(string barcodeText)
@@ -321,12 +333,15 @@ namespace AmazonManifest.ViewModel
                 {
                     SearchResult.Selected = true;
                     SearchResult.Found = true;
+                    SearchResult.FoundCount += 1;
                 }
                 else
                 {
                     AddScan(barcodeText);
                 }
-                Thread.Sleep(1000);
+
+                //WriteXML(); //disabled for now becuase I'm lazy.
+                //Thread.Sleep(1000);
             }), "Searching...");
 
             HandleSearchResult(barcodeText);
@@ -352,6 +367,9 @@ namespace AmazonManifest.ViewModel
                 var start = workSheet.Dimension.Start;
                 var end = workSheet.Dimension.End;
 
+                //Write our count header.
+                workSheet.Cells["BA1"].Value = "Num Times Found";
+
                 foreach (SpreadSheetRow row in Rows)
                 {
                     //Found the barcode on the spreadsheet, highlight it green
@@ -366,7 +384,8 @@ namespace AmazonManifest.ViewModel
                         workSheet.Row(row.RowId + 1).Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                         workSheet.Row(row.RowId + 1).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(255,122,122));
                     }
-            
+
+                    workSheet.Cells["BA" + (row.RowId + 1)].Value = row.FoundCount;
                 }
 
 
@@ -388,6 +407,8 @@ namespace AmazonManifest.ViewModel
 
                 pck.Save();
             }), "Saving...");
+            BarcodeTextBox.Focus();
+            BarcodeTextBox.Select(0, BarcodeTextBox.Text.Length);
             _statusBar.StatusText = "Successfully Saved " + XlsFileName;
 
         }
